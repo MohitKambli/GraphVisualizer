@@ -5,6 +5,7 @@ let cellSize = 50;
 
 let bfsStep;
 let dfsStep;
+let dijkstraStep;
 let algorithmRunning = false;
 let algorithmSelect;
 
@@ -17,11 +18,14 @@ function setup() {
     algorithmSelect.option('Select Algorithm');
     algorithmSelect.option('BFS');
     algorithmSelect.option('DFS');
+    algorithmSelect.option('Dijkstra');
 
     // Create visualize button
     let visualizeButton = createButton('Visualize');
     visualizeButton.mousePressed(() => {
         if (!algorithmRunning) {
+            grid.clearPaths(); // Clear any previous paths
+
             let selectedAlgorithm = algorithmSelect.value();
             let startCell = grid.cells.flat().find(cell => cell.isSource);
 
@@ -30,6 +34,9 @@ function setup() {
                 algorithmRunning = true;
             } else if (selectedAlgorithm === 'DFS') {
                 dfsStep = dfs(grid, startCell);
+                algorithmRunning = true;
+            } else if (selectedAlgorithm === 'Dijkstra') {
+                dijkstraStep = dijkstra(grid, startCell);
                 algorithmRunning = true;
             }
         }
@@ -52,6 +59,10 @@ function draw() {
 
     if (dfsStep) {
         dfsStep();
+    }
+
+    if(dijkstraStep) {
+        dijkstraStep();
     }
 }
 

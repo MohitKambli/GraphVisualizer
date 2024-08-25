@@ -23,6 +23,14 @@ class Grid {
         }
     }
 
+    clearPaths() {
+        for (let i = 0; i < this.cols; i++) {
+            for (let j = 0; j < this.rows; j++) {
+                this.cells[i][j].isPath = false;
+            }
+        }
+    }
+
     handleClick(mx, my) {
         for (let i = 0; i < this.cols; i++) {
             for (let j = 0; j < this.rows; j++) {
@@ -50,5 +58,4 @@ class Grid {
 
         return neighbors;
     }
-
 }

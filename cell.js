@@ -8,6 +8,7 @@ class Cell {
         this.isSource = false;
         this.isDestination = false;
         this.visited = false;
+        this.isPath = false; // Add isPath property to track the final path
     }
 
     show() {
@@ -16,6 +17,8 @@ class Cell {
             fill(0, 255, 0); // Green for source
         } else if (this.isDestination) {
             fill(255, 0, 0); // Red for destination
+        } else if (this.isPath) {
+            fill(255, 215, 0); // Gold for the final path
         } else if (this.visited) {
             fill(173, 216, 230); // Light blue for visited cells
         } else {
@@ -30,6 +33,10 @@ class Cell {
 
     setDestination() {
         this.isDestination = true;
+    }
+
+    setPath() {
+        this.isPath = true; // Define setPath to mark the cell as part of the path
     }
 
     clicked(mx, my) {
