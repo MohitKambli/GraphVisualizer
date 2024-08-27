@@ -6,6 +6,7 @@ let cellSize = 50;
 let bfsStep;
 let dfsStep;
 let dijkstraStep;
+let aStarStep;
 let algorithmRunning = false;
 let algorithmSelect;
 
@@ -19,6 +20,7 @@ function setup() {
     algorithmSelect.option('BFS');
     algorithmSelect.option('DFS');
     algorithmSelect.option('Dijkstra');
+    algorithmSelect.option('A*');
 
     // Create visualize button
     let visualizeButton = createButton('Visualize');
@@ -37,6 +39,9 @@ function setup() {
                 algorithmRunning = true;
             } else if (selectedAlgorithm === 'Dijkstra') {
                 dijkstraStep = dijkstra(grid, startCell);
+                algorithmRunning = true;
+            } else if (selectedAlgorithm === 'A*') {
+                aStarStep = aStar(grid, startCell);
                 algorithmRunning = true;
             }
         }
@@ -63,6 +68,10 @@ function draw() {
 
     if(dijkstraStep) {
         dijkstraStep();
+    }
+
+    if(aStarStep) {
+        aStarStep();
     }
 }
 

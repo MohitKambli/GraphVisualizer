@@ -8,7 +8,10 @@ class Cell {
         this.isSource = false;
         this.isDestination = false;
         this.visited = false;
-        this.isPath = false; // Add isPath property to track the final path
+        this.isPath = false;
+        this.g = Infinity; // Cost from start to this cell
+        this.h = 0; // Heuristic: estimated cost to the goal
+        this.f = Infinity; // Total cost (g + h)
     }
 
     show() {
@@ -29,6 +32,7 @@ class Cell {
 
     setSource() {
         this.isSource = true;
+        this.g = 0; // Start cell has zero cost
     }
 
     setDestination() {
@@ -36,7 +40,7 @@ class Cell {
     }
 
     setPath() {
-        this.isPath = true; // Define setPath to mark the cell as part of the path
+        this.isPath = true;
     }
 
     clicked(mx, my) {

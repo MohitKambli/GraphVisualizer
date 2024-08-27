@@ -6,6 +6,7 @@ class Grid {
         this.cells = [];
         this.sourceSet = false;
         this.destinationSet = false;
+        this.destinationCell = null;
 
         for (let i = 0; i < this.cols; i++) {
             this.cells[i] = [];
@@ -41,6 +42,7 @@ class Grid {
                     } else if (!this.destinationSet) {
                         this.cells[i][j].setDestination();
                         this.destinationSet = true;
+                        this.destinationCell = this.cells[i][j];
                     }
                 }
             }

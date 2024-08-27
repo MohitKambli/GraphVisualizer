@@ -1,8 +1,6 @@
 function bfs(grid, startCell) {
     let queue = [];
     let visited = new Set();
-    let cameFrom = new Map(); // To track the path
-
     queue.push(startCell);
     visited.add(startCell);
 
@@ -13,14 +11,6 @@ function bfs(grid, startCell) {
 
             if (currentCell.isDestination) {
                 noLoop(); // Stop the draw loop when destination is found
-
-                // Trace the path back to the start
-                let pathCell = currentCell;
-                while (pathCell !== startCell) {
-                    pathCell.isPath = true; // Directly set isPath
-                    pathCell = cameFrom.get(pathCell);
-                }
-                startCell.isPath = true; // Mark the start cell as part of the path
                 return;
             }
 
@@ -28,21 +18,16 @@ function bfs(grid, startCell) {
                 if (!visited.has(neighbor)) {
                     visited.add(neighbor);
                     queue.push(neighbor);
-                    cameFrom.set(neighbor, currentCell); // Track the cell from where we came
                 }
             }
         }
     }
-
     return step;
 }
-
 
 function dfs(grid, startCell) {
     let stack = [];
     let visited = new Set();
-    let cameFrom = new Map(); // To track the path
-
     stack.push(startCell);
     visited.add(startCell);
 
@@ -53,13 +38,6 @@ function dfs(grid, startCell) {
 
             if (currentCell.isDestination) {
                 noLoop(); // Stop the draw loop when destination is found
-
-                // Backtrack to mark the path
-                while (cameFrom.has(currentCell)) {
-                    currentCell = cameFrom.get(currentCell);
-                    currentCell.setPath();
-                }
-
                 return;
             }
 
@@ -67,21 +45,17 @@ function dfs(grid, startCell) {
                 if (!visited.has(neighbor)) {
                     visited.add(neighbor);
                     stack.push(neighbor);
-                    cameFrom.set(neighbor, currentCell); // Track where we came from
                 }
             }
         }
     }
-
     return step;
 }
 
-
 function dijkstra(grid, startCell) {
-    let pq = new PriorityQueue();
+    let pq = new PriorityQueue(); // You can use the existing PriorityQueue class.
     let distances = new Map();
     let visited = new Set();
-    let cameFrom = new Map(); // To track the path
 
     // Initialize distances
     for (let i = 0; i < grid.cols; i++) {
@@ -102,13 +76,6 @@ function dijkstra(grid, startCell) {
             // If we reached the destination, stop
             if (currentCell.isDestination) {
                 noLoop();
-
-                // Backtrack to mark the path
-                while (cameFrom.has(currentCell)) {
-                    currentCell = cameFrom.get(currentCell);
-                    currentCell.setPath();
-                }
-
                 return;
             }
 
@@ -120,14 +87,68 @@ function dijkstra(grid, startCell) {
                     if (tentativeDistance < distances.get(neighbor)) {
                         distances.set(neighbor, tentativeDistance);
                         pq.enqueue(neighbor, tentativeDistance);
-                        cameFrom.set(neighbor, currentCell); // Track where we came from
                     }
                 }
             }
             visited.add(currentCell);
         }
     }
+    return step;
+}
+
+function aStar(grid, startCell) {
+    let openSet = new PriorityQueue(); // Priority Queue to manage the open set
+    let cameFrom = new Map();
+    let visited = new Set();
+
+    // Initialize the start cell
+    startCell.g = 0;
+    startCell.h = heuristic(startCell, grid.destinationCell); // You need to define the heuristic function
+    startCell.f = startCell.g + startCell.h;
+    openSet.enqueue(startCell, startCell.f);
+
+    function heuristic(cell, goal) {
+        // Manhattan Distance heuristic for a grid-based pathfinding
+        return Math.abs(cell.i - goal.i) + Math.abs(cell.j - goal.j);
+    }
+
+    function step() {
+        if (!openSet.isEmpty()) {
+            let currentCell = openSet.dequeue();
+            currentCell.visited = true;
+
+            if (currentCell.isDestination) {
+                noLoop(); // Stop the draw loop
+                tracePath(cameFrom, currentCell); // Trace back the path
+                return;
+            }
+
+            for (let neighbor of grid.getNeighbors(currentCell)) {
+                let tentativeG = currentCell.g + 1; // Assuming uniform cost (e.g., 1 per move)
+
+                if (tentativeG < neighbor.g) {
+                    // This path to the neighbor is better than any previous one
+                    cameFrom.set(neighbor, currentCell);
+                    neighbor.g = tentativeG;
+                    neighbor.h = heuristic(neighbor, grid.destinationCell);
+                    neighbor.f = neighbor.g + neighbor.h;
+
+                    if (!visited.has(neighbor)) {
+                        openSet.enqueue(neighbor, neighbor.f);
+                        visited.add(neighbor);
+                    }
+                }
+            }
+        }
+    }
 
     return step;
 }
 
+function tracePath(cameFrom, currentCell) {
+    while (cameFrom.has(currentCell)) {
+        currentCell.setPath();
+        currentCell = cameFrom.get(currentCell);
+    }
+    currentCell.setPath(); // Mark the start cell as part of the path
+}
